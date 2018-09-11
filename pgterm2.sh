@@ -126,8 +126,7 @@ if [ "$x" == "yes" ] || [ "$x" == "y" ]; then
 	psql -d $d -c "select distinct(blocker_pid), database, waiting_duration, blocker_duration from meteo.check_locks() where lower( blocker_mode ) ~ 'excl' and blocker_duration > '$t'::interval order by blocker_duration DESC;"
 	echo "continue ?"
 	read y
-	if [ "$y" == "yes" ] || [ "$y" == "y" ]
-	then
+	if [ "$y" == "yes" ] || [ "$y" == "y" ]; then
 		psql -d $d -A -t -F " " -c "select distinct(blocker_pid), blocker_duration from meteo.check_locks() where lower( blocker_mode ) ~ 'excl' and blocker_duration > '$t'::interval order by blocker_duration DESC;" | cut -d' ' -f1 > ~/pgtermlocks
 		echo ""
 		echo "number of locks to terminate is:" 

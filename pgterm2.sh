@@ -23,50 +23,25 @@ h=$(hostname -s)
 # be aware that this list changes
 #
 case $h in
-	"srv0081")
-                d="everest"
+        "srv0001")
+                d="dbname0001"
                 ;;
-	"srv0113")
-                d="oneyearfr45"
+        "srv0020")
+                echo
+                echo "this is a Multi-Instance DB: which instance do you want ? (enter a number between 20-59)"
+                read i
+                if [[ "$i" =~ ^[0-9]+$ ]] && [ "$i" -ge 20 ] && [ "$i" -le 59 ]; then :
+                else
+                        echo "invalid instance number !"
+                        exit 1
+                fi
+                d="dbname00"$i
                 ;;
-	"srv0004")
-                d="eportal"
+        *)
+                echo
+                echo "host" $h "is unrecognised !"
+                exit 1
                 ;;
-	"srv0080")
-                d="axfrak4"
-                ;;
-	"srv0102")
-                d="axisfr2"
-                ;;
-	"srv0104")
-		d="axisuk5"
-#              	d="axisuk7"
-		;;
-        "srv0058")
-                d="axisfr12"
-                ;;
-        "srv0068")
-		echo ""
-		echo "Multi Instance DB: which instance do you want ? (enter a number between 20-59)"
-		read i
-		if [[ "$i" =~ ^[0-9]+$ ]] && [ "$i" -ge 20 ] && [ "$i" -le 59 ]; then :
-		else
-		    	echo "invalid instance number !"
-        		exit 1
-		fi
-                d="axisfr"$i
-                ;;
-        "srv0095")
-                d="axisuk13"
-                ;;
-	"srv0056")
-                d="axisww01"
-		;;
-	*)
-		echo ""
-		echo "host" $h "is unrecognised !"	
-		exit 1
-		;;
 esac
 
 #echo ""

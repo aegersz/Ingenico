@@ -1,0 +1,38 @@
+#! /bin/bash
+#
+# this script will remove numcomms from any file (like a python script) and is called from getmvt.sh
+#
+# $0 is this script's name
+# $1 is the input file (a list of numcomms specified, one per line) 
+# $2 is the affected target file or file pattern to be edited
+#
+# EXAMPLE: "sh ~/SCRIPTS/getmvt-sed.sh ~/SCRIPTS/getmvt-sed-emv ~/specifictlc/DESIGNA_EMV*"
+#
+# now handles comments and displays them
+#
+if [[ "$1" == "" ]]; then
+	echo "no script input file of numcomms specified"
+	exit 255
+fi
+
+if [[ "$2" == "" ]]; then
+        echo "no affected target file or file pattern specified"
+        exit 255
+fi
+
+echo $0 "running ... using numcomms from the file" $1 "and affecting" $2
+
+while read -r n; do
+	if [[ $(echo $n | cut -c1) == "#" ]]; then
+		echo $n
+	else
+	#	edit if at end
+		sed -Ei "s/, '$n'//g" $2
+	#	edit if at start
+		sed -Ei "s/'$n', //g" $2
+	#	edit if in the middle
+		sed -Ei "s/,'$n'//g" $2
+	#	now confirm that it's been removed
+		grep $n $2
+	fi
+done < $1

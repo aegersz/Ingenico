@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# originally written by Gaurav Verma (Ingenico)
+
+HN=$(hostname -s)
+
+# -----------
+SNAME="CoraAE"
+# -----------
+echo "screen session" $SNAME "defined"
+
+cd ~
+
+checkOSS()
+{
+if [[ $(screen -list $SNAME | grep -v grep | grep "\.${SNAME}") ]]; then
+	# Previous screen exists
+	screen -X -S $SNAME quit && echo "Cleaned previous screen session:" $SNAME 
+fi
+
+sleep 1
+
+# Check again
+if [[ $(screen -list $SNAME | grep -v grep | grep "\.${SNAME}") ]]; then
+	# Previous screen still exists
+	echo "Could not close an already opened screen session:" $SNAME
+	exit 255
+fi
+}
+
+# Increase the (python) parrallelism count
+sed -i 's/NB_FIL = 20/NB_FIL = 30/g' ~/specifictlc/CORA_EMV.py
+
+case $HN in
+	axismgmtmi0501fe)
+	checkOSS
+	screen -d -m -S $SNAME -t W1
+	screen -S $SNAME -X screen -t W2
+	screen -S $SNAME -X screen -t W3
+	screen -S $SNAME -p W1 -X stuff $'python ~/specifictlc/CORA_EMV.py; command rm ~/specifictlc/CORA_EMV.py\n'
+	screen -S $SNAME -p W2 -X stuff $'python ~/specifictlc/CORA_NTE.py; command rm ~/specifictlc/CORA_NTE.py\n'
+	screen -S $SNAME -p W3 -X stuff $'python ~/specifictlc/CORA_CHQ.py; command rm ~/specifictlc/CORA_CHQ.py\n'
+	echo "EMV, CHQ and NTE now running in 3 logical screens/windows"
+	;;
+
+	*)
+	echo "Only for MI05 MGMT server and not for host - $HN"
+	;;
+esac

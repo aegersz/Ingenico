@@ -1,5 +1,5 @@
 """
-Multithreaded processing (code copyrighted but modified but from from Ingenico)
+Multithreading / Parallel command processing (code copyrighted but modified but from from Ingenico)
 """
 
 import sys
@@ -27,18 +27,21 @@ class dumbb (threading.Thread):
 	self.loc.release()
         break
       self.loc.release()
-      CmdLine = 'echo; ls ' + self.cour
-#     + ' 2>&1>/dev/null'
+# Command
+# -------
+      CmdLine = 'echo; ls ' + self.cour # + ' 2>&1>/dev/null'
       retcode = subprocess.call(CmdLine  , shell=True)
       print str(self.cour) +  ";" + str(retcode)
       sleep (2.0)
 
 # Parallelism value
+# -----------------
 NB_FIL = 3
 ste = []
 ecv = []
 
 # Parameters (ad infinitum)
+# ------------------------
 ste = ['a*', 'b*', 'c*', 'd*', 'e*', 'f*']
 
 goulot = threading.Lock()
